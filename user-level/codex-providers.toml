@@ -1,0 +1,12 @@
+# Append to ~/.codex/config.toml (providers are read only from the user config, not from the project).
+# Codex speaks only the Responses API (wire_api = "chat" was removed in 2026). Providers that offer only
+# Chat Completions need a translator such as a local LiteLLM proxy. Verify each provider's current docs.
+
+# Example: a local LiteLLM proxy exposing DeepSeek/Kimi/GLM through the Responses API.
+[model_providers.litellm]
+name = "LiteLLM proxy"
+base_url = "http://localhost:4000/v1"
+env_key = "LITELLM_API_KEY"
+wire_api = "responses"
+
+# Then run:  codex -c model_provider=litellm -m deepseek-chat

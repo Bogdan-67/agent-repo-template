@@ -1,0 +1,15 @@
+{
+  "schema": "agent-repo-template/tasks@1",
+  "tasks": [
+    {
+      "id": "T-0001",
+      "title": "Example: replace with a real task",
+      "status": "todo",
+      "done_when": "A concrete, checkable condition.",
+      "verify": "Command or procedure that proves it, e.g. pytest tests/test_x.py",
+      "passes": false,
+      "evidence": "",
+      "links": []
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "description": "agent-repo-template: project context at session start, documentation check before a turn ends",
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" start --harness codex", "timeout": 30, "additionalContextLimit": 0 } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" stop --harness codex", "timeout": 60 } ] }
+    ]
+  }
+}

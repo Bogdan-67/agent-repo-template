@@ -1,0 +1,17 @@
+# agent-repo-template docs_guard
+# Kimi Code CLI: SessionStart cannot add context, so context is added on the first prompt of a session.
+# Only the four fields event/matcher/command/timeout are allowed; an extra field breaks the config.
+[[hooks]]
+event = "SessionStart"
+command = 'r=$(git rev-parse --show-toplevel 2>/dev/null); if [ -n "$r" ] && [ -f "$r/.agents/hooks/docs_guard.py" ]; then exec python3 "$r/.agents/hooks/docs_guard.py" start --harness kimi; fi'
+timeout = 30
+
+[[hooks]]
+event = "UserPromptSubmit"
+command = 'r=$(git rev-parse --show-toplevel 2>/dev/null); if [ -n "$r" ] && [ -f "$r/.agents/hooks/docs_guard.py" ]; then exec python3 "$r/.agents/hooks/docs_guard.py" prompt --harness kimi; fi'
+timeout = 30
+
+[[hooks]]
+event = "Stop"
+command = 'r=$(git rev-parse --show-toplevel 2>/dev/null); if [ -n "$r" ] && [ -f "$r/.agents/hooks/docs_guard.py" ]; then exec python3 "$r/.agents/hooks/docs_guard.py" stop --harness kimi; fi'
+timeout = 60

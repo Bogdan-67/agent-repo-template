@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      { "type": "command", "bash": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" start --harness copilot", "timeoutSec": 30 }
+    ],
+    "agentStop": [
+      { "type": "command", "bash": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" stop --harness copilot", "timeoutSec": 60 }
+    ]
+  }
+}

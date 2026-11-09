@@ -1,0 +1,8 @@
+#!/bin/sh
+# Documentation gate for every agent and every human (agent-repo-template).
+# Enable once per clone: git config core.hooksPath .githooks
+root="$(git rev-parse --show-toplevel)"
+python3 "$root/.agents/hooks/docs_guard.py" commit || exit 1
+python3 "$root/.agents/bin/sync.py" --check >/dev/null 2>&1 || { python3 "$root/.agents/bin/sync.py" --check; exit 1; }
+# Chain to a pre-existing local hook if the installer preserved one.
+if [ -x "$root/.githooks/pre-commit.local" ]; then exec "$root/.githooks/pre-commit.local" "$@"; fi
