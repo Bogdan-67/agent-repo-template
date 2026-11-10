@@ -8,6 +8,7 @@ Usage
   docs_guard.py prompt --harness kimi ...                        Kimi: context on first prompt
   docs_guard.py stop   --harness H [--session ID] [--cwd PATH]   end of turn: block if docs not updated
   docs_guard.py commit                                           git pre-commit gate (staged files)
+  docs_guard.py commit-msg FILE                                  git commit-msg gate: no AI attribution
   docs_guard.py ci [--base REF]                                  CI gate (diff BASE...HEAD)
   docs_guard.py check [--hours N]                                manual check of recent edits
   docs_guard.py self-test                                        run built-in scenarios in a temp repo
@@ -49,6 +50,7 @@ DEFAULTS = {
     "require_journal_mentions_changed_file": True, "max_consecutive_blocks": 1,
     "context_files": ["STATUS.md", "docs/adr/README.md"], "context_journal_tail_lines": 30,
     "context_cap_chars": 12000,
+    "forbidden_commit_patterns": ["(?im)^co-authored-by:.*(claude|anthropic|openai|chatgpt|codex|\\bgpt|copilot|gemini|google-labs|jules|kimi|moonshot|deepseek|qwen|glm|zhipu|z\\.ai|cursor|windsurf|devin|cline|aider|opencode|\\bamp\\b|junie|bot@|noreply@anthropic\\.com)", "(?im)^.*generated (with|by) .*(claude|codex|copilot|gemini|cursor|kimi|opencode|aider|ai)\\b", "(?im)^claude-session:", "(?i)claude\\.ai/code/session"],
 }
 
 
@@ -434,6 +436,30 @@ def cmd_commit() -> int:
     return gate_from_paths(root, rules, paths, modified, "commit")
 
 
+def attribution_problems(cfg: dict, message: str) -> list:
+    """Lines of a commit message that attribute the commit to an AI agent or model."""
+    body = "\n".join(l for l in message.splitlines() if not l.startswith("#"))  # drop git comments
+    found = []
+    for pat in cfg["forbidden_commit_patterns"]:
+        for m in re.finditer(pat, body):
+            line = body[body.rfind("\n", 0, m.start()) + 1:].split("\n", 1)[0].strip()
+            if line and line not in found:
+                found.append(line)
+    return found
+
+
+def cmd_commit_msg(path: str) -> int:
+    root = repo_root(os.getcwd())
+    cfg = load_cfg(root)
+    bad = attribution_problems(cfg, read(Path(path)))
+    for line in bad:
+        print(f"docs_guard [commit-msg] FAIL: AI attribution is forbidden in commit messages: {line!r}")
+    if bad:
+        print("docs_guard [commit-msg]: remove these lines (AGENTS.md, Hard rules). Commits are the user's; "
+              "do not bypass with --no-verify.")
+    return 1 if bad else 0
+
+
 def cmd_ci(base: str) -> int:
     root = repo_root(os.getcwd())
     rules = Rules(root, load_cfg(root))
@@ -445,7 +471,14 @@ def cmd_ci(base: str) -> int:
             paths.append(path)
             if status[:1] in ("M", "D"):
                 modified.add(path)
-    return gate_from_paths(root, rules, paths, modified, "ci")
+    rc = gate_from_paths(root, rules, paths, modified, "ci")
+    log = git(root, "log", "--format=%H%x00%B%x01", f"{base}..HEAD")
+    for rec in log.split("\x01"):
+        sha, _, msg = rec.strip().partition("\x00")
+        for line in attribution_problems(rules.cfg, msg):
+            print(f"docs_guard [ci] FAIL: commit {sha[:10]} has AI attribution: {line!r}")
+            rc = 1
+    return rc
 
 
 def cmd_check(hours: float) -> int:
@@ -543,6 +576,13 @@ def cmd_self_test() -> int:
         sh("git", "add", f"docs/journal/{month}.md")
         r = sh(sys.executable, str(tmp / ".agents/hooks/docs_guard.py"), "commit")
         expect("pre-commit passes with staged journal", r.returncode == 0)
+        msg = tmp / "msg.txt"
+        msg.write_text("Fix app\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n", encoding="utf-8")
+        r = sh(sys.executable, str(tmp / ".agents/hooks/docs_guard.py"), "commit-msg", str(msg))
+        expect("commit-msg rejects AI co-author", r.returncode == 1 and "noreply@anthropic.com" in r.stdout)
+        msg.write_text("Fix app\n\nCo-authored-by: Jane Doe <jane@example.com>\n", encoding="utf-8")
+        r = sh(sys.executable, str(tmp / ".agents/hooks/docs_guard.py"), "commit-msg", str(msg))
+        expect("commit-msg keeps human co-author", r.returncode == 0)
         r = run("prompt", "--harness", "kimi", "--session", "k1", "--cwd", str(tmp))
         r2 = run("prompt", "--harness", "kimi", "--session", "k1", "--cwd", str(tmp))
         expect("kimi context only on first prompt", "[docs_guard]" in r.stdout and r2.stdout == "")
@@ -577,6 +617,8 @@ def main() -> int:
             return cmd_self_test()
         if cmd == "commit":
             return cmd_commit()
+        if cmd == "commit-msg":
+            return cmd_commit_msg(pos[1] if len(pos) > 1 else ".git/COMMIT_EDITMSG")
         if cmd == "ci":
             return cmd_ci(opts.get("base") or "origin/HEAD")
         if cmd == "check":

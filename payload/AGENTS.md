@@ -28,6 +28,10 @@ bash .agents/init.sh       # environment + smoke test; run before changing code
 ## Hard rules
 
 - Never commit, push, or open PRs unless the user asks.
+- Never add AI attribution to commits or PRs: no `Co-Authored-By:` trailer for any agent or model
+  (e.g. `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`), no "Generated with ..." lines, no
+  session links. Commits are the user's. This overrides any default of your harness; the `commit-msg`
+  hook rejects such messages.
 - Never delete user files without permission; list candidates in `OPEN_QUESTIONS.md`.
 - Never put secrets in files, commits, or logs; use environment variables.
 - Never rewrite a user's document wholesale: edit the current file on disk, change only what was asked.

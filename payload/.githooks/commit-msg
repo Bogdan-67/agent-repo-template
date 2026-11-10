@@ -1,0 +1,6 @@
+#!/bin/sh
+# Rejects AI attribution in commit messages (Co-Authored-By agent/model trailers, "Generated with ...",
+# session links). agent-repo-template; enable once per clone: git config core.hooksPath .githooks
+root="$(git rev-parse --show-toplevel)"
+python3 "$root/.agents/hooks/docs_guard.py" commit-msg "$1" || exit 1
+if [ -x "$root/.githooks/commit-msg.local" ]; then exec "$root/.githooks/commit-msg.local" "$@"; fi

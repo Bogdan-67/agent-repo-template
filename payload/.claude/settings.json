@@ -1,10 +1,30 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "hooks": {
     "SessionStart": [
-      { "hooks": [ { "type": "command", "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" start --harness claude", "timeout": 30 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" start --harness claude",
+            "timeout": 30
+          }
+        ]
+      }
     ],
     "Stop": [
-      { "hooks": [ { "type": "command", "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" stop --harness claude", "timeout": 60 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/docs_guard.py\" stop --harness claude",
+            "timeout": 60
+          }
+        ]
+      }
     ]
   }
 }

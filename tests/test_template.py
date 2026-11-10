@@ -86,6 +86,16 @@ class InstalledProject(unittest.TestCase):
                            input=json.dumps({"session_id": "x", "cwd": str(self.p)}))
         self.assertIn("additionalContext", r.stdout)
 
+    def test_commit_msg_hook_rejects_ai_coauthor(self):
+        sh(self.p, PY, ".agents/bin/sync.py")
+        sh(self.p, "git", "config", "core.hooksPath", ".githooks")
+        sh(self.p, "git", "add", "-A")
+        r = sh(self.p, "git", "commit", "-qm", "init\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>", check=False)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("AI attribution", r.stdout + r.stderr)
+        r = sh(self.p, "git", "commit", "-qm", "init\n\nCo-authored-by: Jane <jane@example.com>", check=False)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
     def test_manifest_covers_payload(self):
         m = json.loads((T / "MANIFEST.json").read_text())
         files = {p.relative_to(T / "payload").as_posix() for p in (T / "payload").rglob("*") if p.is_file()}

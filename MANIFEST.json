@@ -19,6 +19,7 @@
     ".claude/settings.json": "merge",
     ".codex/hooks.json": "merge",
     ".gemini/settings.json": "merge",
+    ".githooks/commit-msg": "template",
     ".githooks/pre-commit": "template",
     ".github/hooks/docs-guard.json": "merge",
     ".github/workflows/agent-docs.yml": "template",

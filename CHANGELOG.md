@@ -13,4 +13,6 @@ the upgrading agent applies them in place after the user approves. Everything el
 - `sync.py`: role wrappers for Claude Code, Codex, Kimi Code, OpenCode, Copilot; skill symlinks for
   Claude Code; validation of skills and AGENTS.md size; install lock.
 - OpenCode plugin with V2 and V1 entry points (not verified on a live build).
+- Ban on AI attribution in commits: rule in AGENTS.md, `attribution` off in `.claude/settings.json`,
+  `.githooks/commit-msg` and a CI check of commit messages (`docs_guard.py commit-msg`).
 - User-level snippets: Kimi hooks installer, Codex providers, Claude Code with DeepSeek/Kimi/GLM.

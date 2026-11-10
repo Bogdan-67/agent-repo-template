@@ -8,18 +8,111 @@
   "journal_dir": "docs/journal",
   "adr_dir": "docs/adr",
   "handoff_dir": "docs/handoff",
-  "doc_files": ["AGENTS.md", "CLAUDE.md", "GEMINI.md", "STATUS.md", "OPEN_QUESTIONS.md", "GLOSSARY.md", "STRUCTURE.md", "README.md", "CHANGELOG.md"],
-  "doc_prefixes": ["docs/", ".agents/", ".claude/", ".codex/", ".opencode/", ".gemini/", ".github/", ".githooks/", ".cursor/"],
-  "significant_extensions": [".py", ".ipynb", ".r", ".jl", ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".scala", ".c", ".h", ".cc", ".cpp", ".hpp", ".cs", ".rb", ".php", ".swift", ".sql", ".sh", ".yaml", ".yml", ".toml", ".json", ".cfg", ".ini", ".md", ".tf", ".proto", ".dockerfile"],
-  "significant_names": ["Dockerfile", "Makefile", "justfile"],
-  "ignore_patterns": ["(^|/)node_modules/", "(^|/)\\.venv/", "(^|/)__pycache__/", "\\.lock$", "(^|/)package-lock\\.json$", "(^|/)poetry\\.lock$", "(^|/)uv\\.lock$"],
-  "state_patterns": ["^reports/.*\\.md$", "^experiments/", "^configs?/", "(^|/)params\\.ya?ml$", "(^|/)dvc\\.yaml$"],
-  "decision_patterns": ["^configs?/", "^experiments/", "(^|/)params\\.ya?ml$", "(^|/)dvc\\.yaml$", "(^|/)pyproject\\.toml$", "(^|/)package\\.json$"],
-  "frozen_globs": ["docs/journal/archive/**"],
+  "doc_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "STATUS.md",
+    "OPEN_QUESTIONS.md",
+    "GLOSSARY.md",
+    "STRUCTURE.md",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "doc_prefixes": [
+    "docs/",
+    ".agents/",
+    ".claude/",
+    ".codex/",
+    ".opencode/",
+    ".gemini/",
+    ".github/",
+    ".githooks/",
+    ".cursor/"
+  ],
+  "significant_extensions": [
+    ".py",
+    ".ipynb",
+    ".r",
+    ".jl",
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".tsx",
+    ".jsx",
+    ".go",
+    ".rs",
+    ".java",
+    ".kt",
+    ".scala",
+    ".c",
+    ".h",
+    ".cc",
+    ".cpp",
+    ".hpp",
+    ".cs",
+    ".rb",
+    ".php",
+    ".swift",
+    ".sql",
+    ".sh",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".json",
+    ".cfg",
+    ".ini",
+    ".md",
+    ".tf",
+    ".proto",
+    ".dockerfile"
+  ],
+  "significant_names": [
+    "Dockerfile",
+    "Makefile",
+    "justfile"
+  ],
+  "ignore_patterns": [
+    "(^|/)node_modules/",
+    "(^|/)\\.venv/",
+    "(^|/)__pycache__/",
+    "\\.lock$",
+    "(^|/)package-lock\\.json$",
+    "(^|/)poetry\\.lock$",
+    "(^|/)uv\\.lock$"
+  ],
+  "state_patterns": [
+    "^reports/.*\\.md$",
+    "^experiments/",
+    "^configs?/",
+    "(^|/)params\\.ya?ml$",
+    "(^|/)dvc\\.yaml$"
+  ],
+  "decision_patterns": [
+    "^configs?/",
+    "^experiments/",
+    "(^|/)params\\.ya?ml$",
+    "(^|/)dvc\\.yaml$",
+    "(^|/)pyproject\\.toml$",
+    "(^|/)package\\.json$"
+  ],
+  "frozen_globs": [
+    "docs/journal/archive/**"
+  ],
   "freeze_past_journal_months": true,
   "require_journal_mentions_changed_file": true,
   "max_consecutive_blocks": 1,
-  "context_files": ["STATUS.md", "docs/adr/README.md"],
+  "context_files": [
+    "STATUS.md",
+    "docs/adr/README.md"
+  ],
   "context_journal_tail_lines": 30,
-  "context_cap_chars": 12000
+  "context_cap_chars": 12000,
+  "forbidden_commit_patterns": [
+    "(?im)^co-authored-by:.*(claude|anthropic|openai|chatgpt|codex|\\bgpt|copilot|gemini|google-labs|jules|kimi|moonshot|deepseek|qwen|glm|zhipu|z\\.ai|cursor|windsurf|devin|cline|aider|opencode|\\bamp\\b|junie|bot@|noreply@anthropic\\.com)",
+    "(?im)^.*generated (with|by) .*(claude|codex|copilot|gemini|cursor|kimi|opencode|aider|ai)\\b",
+    "(?im)^claude-session:",
+    "(?i)claude\\.ai/code/session"
+  ]
 }

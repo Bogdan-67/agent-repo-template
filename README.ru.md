@@ -50,7 +50,8 @@ docs/agents/                роли (implementer, reviewer, docs-keeper), domai
 .agents/skills/             навыки: session-close, record-decision, write-handoff, cold-start-test
 .agents/init.sh             окружение и smoke-тест проекта
 .claude/ .codex/ .gemini/ .opencode/ .github/hooks/   подключение хуков к оболочкам
-.githooks/pre-commit        гарантия для любого агента и человека
+.githooks/pre-commit        гарантия ведения документации для любого агента и человека
+.githooks/commit-msg        запрет подписей ИИ в сообщениях коммитов
 ```
 
 ## Как это держится
@@ -61,6 +62,10 @@ docs/agents/                роли (implementer, reviewer, docs-keeper), domai
   больше 150 строк или кто-то правил прошлый месяц журнала. Со второй неудачи агент отпускается, а долг
   переходит в начало следующей сессии.
 - Коммит с изменённым кодом без записи в журнале отклоняет `pre-commit`, на pull request — CI.
+- Соавторство ИИ в коммитах запрещено: никаких `Co-Authored-By: Claude ... <noreply@anthropic.com>` и подобных
+  строк для любых агентов, никаких «Generated with ...» и ссылок на сессии. Правило записано в `AGENTS.md`,
+  `.claude/settings.json` отключает подписи Claude Code, а хук `commit-msg` и CI отклоняют такие сообщения от
+  любой оболочки. Соавторы-люди разрешены.
 
 | Оболочка | Инструкции | Навыки | Роли | Хук в конце хода |
 |---|---|---|---|---|

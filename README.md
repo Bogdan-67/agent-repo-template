@@ -50,7 +50,8 @@ docs/agents/                roles (implementer, reviewer, docs-keeper), domain.m
 .agents/skills/             skills: session-close, record-decision, write-handoff, cold-start-test
 .agents/init.sh             environment check and smoke test of the project
 .claude/ .codex/ .gemini/ .opencode/ .github/hooks/   hook wiring for each harness
-.githooks/pre-commit        the guarantee for any agent and any human
+.githooks/pre-commit        documentation gate for any agent and any human
+.githooks/commit-msg        rejects AI attribution in commit messages
 ```
 
 ## How it is enforced
@@ -61,6 +62,10 @@ docs/agents/                roles (implementer, reviewer, docs-keeper), domain.m
   if `STATUS.md` grew past 150 lines, or if a past month of the journal was edited. After a second failure
   the agent is released and the debt is handed to the start of the next session.
 - A commit with changed code and no journal entry is rejected by `pre-commit`; pull requests are checked in CI.
+- AI attribution in commits is forbidden: no `Co-Authored-By: Claude ... <noreply@anthropic.com>` or similar
+  trailers for any agent, no "Generated with ..." lines, no session links. `AGENTS.md` states the rule,
+  `.claude/settings.json` turns Claude Code attribution off, and the `commit-msg` hook and CI reject such messages
+  from any harness. Human co-authors are allowed.
 
 | Harness | Instructions | Skills | Roles | End-of-turn hook |
 |---|---|---|---|---|

@@ -52,7 +52,8 @@ Rules that always hold:
 
 Steps:
 1. Copy `CREATE` files from `$T/payload/` preserving paths and executable bits
-   (`.agents/hooks/docs_guard.py`, `.agents/bin/sync.py`, `.agents/init.sh`, `.githooks/pre-commit`).
+   (`.agents/hooks/docs_guard.py`, `.agents/bin/sync.py`, `.agents/init.sh`, `.githooks/pre-commit`,
+   `.githooks/commit-msg`).
 2. `AGENTS.md`: if it existed, keep it and append the template sections it lacks (Read order, Where
    things are written, Session protocol, Roles) adapted to existing content. If not, create from payload
    and fill placeholders. Keep it ≤150 lines; move long sections to linked docs.
@@ -69,9 +70,10 @@ Steps:
    or `.github/hooks/`, **merge** the template hook entries into the existing JSON; do not replace.
    If `.cursor/hooks.json` exists with a stop hook, do not add another: Cursor also runs
    `.claude/settings.json` hooks when third-party configs are enabled (the default).
-7. Git hook: if a local pre-commit hook exists, move it to `.githooks/pre-commit.local` (the template
-   hook chains to it). If the project uses the pre-commit framework or husky, add
-   `python3 .agents/hooks/docs_guard.py commit` as a local hook there instead of `core.hooksPath`.
+7. Git hooks: if local `pre-commit` or `commit-msg` hooks exist, move them to `.githooks/pre-commit.local`
+   and `.githooks/commit-msg.local` (the template hooks chain to them). If the project uses the pre-commit
+   framework or husky, add `python3 .agents/hooks/docs_guard.py commit` (pre-commit stage) and
+   `python3 .agents/hooks/docs_guard.py commit-msg <file>` (commit-msg stage) there instead of `core.hooksPath`.
    Otherwise run `git config core.hooksPath .githooks`.
 8. Fill `docs/OVERVIEW.md`, `STATUS.md`, `STRUCTURE.md`, `.agents/init.sh`, `docs/agents/domain.md`,
    the two project-specific questions in `docs/agents/cold-start-quiz.md`, and initial tasks in
@@ -88,9 +90,10 @@ Steps:
 1. `python3 .agents/bin/sync.py --check` → OK.
 2. `python3 .agents/hooks/docs_guard.py self-test` → OK.
 3. `bash .agents/init.sh` → runs (or report what is missing).
-4. `AGENTS.md` ≤150 lines and <32 KiB; `STATUS.md` ≤150 lines; no `{{` left except `TODO(user)`.
-5. `git diff --stat` shows no deleted user content that was not moved or merged.
-6. Ask the user to run the cold-start test (skill `cold-start-test`) in a different harness or model.
+4. `.claude/settings.json` contains `"attribution": {"commit": "", "pr": ""}` (merged if the file existed).
+5. `AGENTS.md` ≤150 lines and <32 KiB; `STATUS.md` ≤150 lines; no `{{` left except `TODO(user)`.
+6. `git diff --stat` shows no deleted user content that was not moved or merged.
+7. Ask the user to run the cold-start test (skill `cold-start-test`) in a different harness or model.
 
 ## Phase 4. Report to the user
 
